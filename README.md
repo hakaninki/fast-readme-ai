@@ -1,40 +1,38 @@
 > 🤖 This README was generated automatically using **fast-readme-ai** — the AI documentation generator built in this repository.
-![AI Generated README](https://img.shields.io/badge/README-AI%20Generated-blue)
+ ![AI Generated README](https://img.shields.io/badge/README-AI%20Generated-blue)
 
 # fast-readme-ai
 
-![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
-![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+[![Python](https://img.shields.io/badge/language-Python-blue.svg)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ## Overview
-
-fast-readme-ai is an AI-powered tool designed to automatically generate comprehensive `README.md` files for software projects. It analyzes a given repository's structure and key files, detects its technology stack, and leverages the Google Gemini API to produce detailed, professional documentation, including architecture diagrams. This project aims to streamline the documentation process for developers.
+fast-readme-ai is an intelligent tool designed to automatically generate comprehensive and professional `README.md` files for software projects. It analyzes project directories, detects technology stacks, extracts key file information, and leverages the Google Gemini API to produce high-quality documentation, including architecture diagrams.
 
 ## Features
-
-*   Automated repository analysis (directory structure, file contents).
-*   Intelligent technology stack detection (languages, frameworks, databases).
-*   AI-driven README content generation using Google Gemini.
-*   Automatic generation of Mermaid.js architecture diagrams.
-*   FastAPI backend for robust API endpoints.
-*   Streamlit-based demo application for interactive usage.
-*   Support for cloning remote Git repositories.
+*   **Automated Project Analysis**: Scans project directories to understand structure and content.
+*   **Technology Stack Detection**: Identifies programming languages, frameworks, and databases used.
+*   **Key File Content Extraction**: Summarizes important files like `main.py`, `package.json`, and `requirements.txt`.
+*   **AI-Powered README Generation**: Utilizes the Google Gemini API to write detailed and context-aware READMEs.
+*   **Mermaid Diagram Generation**: Automatically creates visual architecture diagrams based on the detected project structure.
+*   **FastAPI Backend**: Provides a robust and scalable API for README generation.
+*   **Streamlit Demo**: Offers an interactive web interface for easy project input and README output.
+*   **Git Repository Cloning**: Can analyze projects directly from GitHub URLs.
 
 ## Tech Stack
 
-| Layer            | Technology                               |
-| :--------------- | :--------------------------------------- |
-| **Languages**    | Python, JavaScript                       |
-| **Frameworks**   | FastAPI, Next.js, React                  |
-| **Databases**    | PostgreSQL, Redis                        |
-| **AI/ML**        | Google Gemini                            |
-| **Package Mgrs** | pip, npm                                 |
-| **Other**        | SQLAlchemy, Uvicorn, Streamlit, GitPython|
+| Layer          | Technology                                  |
+| :------------- | :------------------------------------------ |
+| **Languages**  | Python                                      |
+| **Frameworks** | FastAPI, Streamlit                          |
+| **AI/ML**      | Google Generative AI (Gemini)               |
+| **Utilities**  | GitPython, python-dotenv, Pydantic, httpx   |
+| **Server**     | Uvicorn                                     |
 
 ## Project Structure
 
 ```
-0457947f-eb66-4f9a-a43b-1931cbbfbe35/
+.
 ├── analyzer/
 │   ├── __init__.py
 │   ├── directory_tree.py
@@ -82,33 +80,29 @@ fast-readme-ai is an AI-powered tool designed to automatically generate comprehe
 
 ## Getting Started
 
-To get a local copy up and running, follow these simple steps.
-
 ### Prerequisites
-
-*   Python 3.8+
-*   Git
+Before you begin, ensure you have the following installed:
+*   **Python 3.8+**
+*   **Git**
 
 ### Installation
-
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-org/fast-readme-ai.git # Replace with actual repo URL
+    git clone https://github.com/your-username/fast-readme-ai.git
     cd fast-readme-ai
     ```
-2.  **Create and activate a virtual environment (recommended):**
-    ```bash
-    python -m venv venv
-    source venv/bin/activate  # On Windows: `venv\Scripts\activate`
-    ```
-3.  **Install Python dependencies:**
+2.  **Install dependencies:**
     ```bash
     pip install -r requirements.txt
     ```
-4.  **Set up environment variables:**
+
+### Environment Setup
+1.  **Create a `.env` file:**
+    Copy the `.env.example` file to `.env` in the project root:
     ```bash
     cp .env.example .env
     ```
+2.  **Configure API Key:**
     Open the newly created `.env` file and add your Google Gemini API key:
     ```
     GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
@@ -118,74 +112,61 @@ To get a local copy up and running, follow these simple steps.
 ## Usage
 
 ### Running the FastAPI Backend
-
-Start the API server:
-
+To start the API server:
 ```bash
-uvicorn backend.main:app --reload --host 0.0.0.0 --port 8000
+uvicorn backend.main:app --reload
 ```
-
-The API will be accessible at `http://localhost:8000`.
+The API will be accessible at `http://127.0.0.1:8000`.
 
 ### Running the Streamlit Demo
-
-In a separate terminal, launch the interactive Streamlit application:
-
+To launch the interactive demo application:
 ```bash
 streamlit run demo/streamlit_app.py
 ```
-
-The Streamlit app will open in your web browser, typically at `http://localhost:8501`. From there, you can input a repository URL or local path to generate a README.
+This will open the Streamlit app in your web browser, typically at `http://localhost:8501`. You can then input a local project path or a GitHub URL to generate a README.
 
 ## API Reference
 
 The FastAPI backend exposes the following endpoints:
 
-| Method | Path         | Description                                                                                             |
-| :----- | :----------- | :------------------------------------------------------------------------------------------------------ |
-| `GET`  | `/`          | Returns basic API information, including the tool's name and version.                                   |
-| `GET`  | `/health`    | Checks the health status of the API, indicating if it's running correctly.                              |
-| `POST` | `/generate`  | Initiates the README generation process. Expects a JSON payload containing details about the project (e.g., a GitHub repository URL or a local project path). |
+| Method | Path               | Description                                       |
+| :----- | :----------------- | :------------------------------------------------ |
+| `GET`  | `/`                | Returns basic API information (name, version).    |
+| `POST` | `/generate-readme` | Generates a README.md for a given project path or URL. |
+
+**Example Request (Python using `httpx`):**
+
+```python
+import httpx
+
+async def generate_readme_example():
+    payload = {
+        "project_path": "./examples/sample_project", # Or a GitHub URL like "https://github.com/octocat/Spoon-Knife"
+        "output_path": "./generated_readme.md"
+    }
+    async with httpx.AsyncClient() as client:
+        response = await client.post("http://127.0.0.1:8000/generate-readme", json=payload)
+        response.raise_for_status()
+        print(response.json())
+
+# To run: asyncio.run(generate_readme_example())
+```
 
 ## Architecture
 
 ```mermaid
 graph TD
-    A[User/Client] --> B(FastAPI Backend)
-    B --> C{Analyzer Module}
-    B --> D{Generator Module}
-
-    C --> C1[Repo Cloner]
-    C --> C2[File Reader]
-    C --> C3[Stack Detector]
-
-    D --> D1[Prompt Builder]
-    D --> D2[Mermaid Builder]
-    D --> D3[README Writer]
-
-    C1 --> E[Input Repository]
-    C2 --> E
-    C3 --> E
-
-    D1 --> F[Google Gemini API]
-    D1 --> G[Analysis Data]
-    D2 --> G
-    D3 --> H[Generated README.md]
-    D3 --> I[Mermaid Diagram Code]
-
-    E --&gt; G
-    F --&gt; D1
-    G --&gt; D1
-    G --&gt; D2
-    D2 --&gt; I
-    D1 --&gt; D3
-    I --&gt; D3
+    A[User/Client (Streamlit/HTTP)] --> B[FastAPI Backend]
+    B --> C[Analyzer Module]
+    C --> D[Generator Module]
+    D --> E[Google Gemini API]
+    E --> D
+    D --> F[Generated README]
+    B --> A
 ```
 
 ## Contributing
-
-Contributions are welcome! Please feel free to open issues for bug reports or feature requests, or submit pull requests with improvements. Ensure your code adheres to the project's style guidelines and includes appropriate tests.
+Contributions are welcome! Please feel free to submit issues, feature requests, or pull requests.
 
 ## License
-
-This project is licensed under the MIT License - see the `LICENSE` file for details.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
