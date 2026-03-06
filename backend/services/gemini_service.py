@@ -40,7 +40,7 @@ def generate_readme(prompt: str) -> str:
             model_name=model_name,
             generation_config=genai.types.GenerationConfig(
                 temperature=0.3,
-                max_output_tokens=8192,
+                max_output_tokens=16384,
             ),
         )
 

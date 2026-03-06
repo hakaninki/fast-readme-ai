@@ -13,6 +13,7 @@ from analyzer.stack_detector import detect_stack
 from backend.config import settings
 from backend.models.schemas import GenerateRequest, GenerateResponse
 from backend.services.gemini_service import generate_readme
+from generator.mermaid_builder import sanitize_mermaid_in_markdown
 from generator.prompt_builder import build_prompt
 from generator.readme_writer import write_readme
 
@@ -120,12 +121,18 @@ async def generate_endpoint(request: GenerateRequest) -> GenerateResponse:
         except RuntimeError as exc:
             raise HTTPException(status_code=502, detail=str(exc))
 
-        # Step 5: Optionally write to disk
+        # Step 5: Sanitize Mermaid diagram (forbidden chars + HTML entities)
+        readme_content = sanitize_mermaid_in_markdown(readme_content)
+
+        # Step 5b: Collapse excessive blank lines (3+ newlines → 2)
+        readme_content = re.sub(r'\n{3,}', '\n\n', readme_content).strip() + "\n"
+
+        # Step 6: Optionally write to disk
         output_path = None
         if request.output_path:
             output_path = write_readme(readme_content, request.output_path)
 
-        # Step 6: Extract Mermaid diagram
+        # Step 7: Extract Mermaid diagram
         mermaid_diagram = _extract_mermaid(readme_content)
 
         return GenerateResponse(
