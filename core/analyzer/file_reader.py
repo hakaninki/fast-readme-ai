@@ -7,7 +7,7 @@ For all other supported files, returns raw content truncated to a size limit.
 import ast
 import logging
 from pathlib import Path
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 logger = logging.getLogger(__name__)
 

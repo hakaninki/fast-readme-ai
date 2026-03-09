@@ -1,8 +1,11 @@
 install:
-	pip install -r requirements.txt
+	pip install -e .
+
+setup:
+	python start.py
 
 run:
-	uvicorn backend.main:app --reload --port 8000
+	uvicorn api.main:app --reload --port 8000
 
 demo:
 	streamlit run demo/streamlit_app.py
@@ -15,3 +18,6 @@ lint:
 
 format:
 	black .
+
+generate:
+	fast-readme .

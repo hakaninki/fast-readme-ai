@@ -6,7 +6,7 @@ import subprocess
 import uuid
 from pathlib import Path
 
-from backend.config import settings
+from config import TEMP_DIR
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +39,7 @@ def clone_repo(github_url: str) -> str:
             "Expected format: https://github.com/owner/repo"
         )
 
-    temp_base = Path(settings.TEMP_DIR)
+    temp_base = Path(TEMP_DIR)
     temp_base.mkdir(parents=True, exist_ok=True)
 
     clone_dir = temp_base / str(uuid.uuid4())

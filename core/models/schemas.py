@@ -1,6 +1,6 @@
 """Pydantic v2 request and response models for the README generation API."""
 
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 
 from pydantic import BaseModel
 
@@ -12,7 +12,7 @@ class GenerateRequest(BaseModel):
         source: A local directory path or GitHub HTTPS URL.
         project_name: Optional project name; inferred from directory if omitted.
         output_path: Optional file path to write the README to disk.
-        model: Gemini model name to use (defaults to ``gemini-1.5-flash``).
+        model: Gemini model name to use (defaults to ``gemini-2.5-flash``).
     """
 
     source: str

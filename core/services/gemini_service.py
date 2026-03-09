@@ -2,22 +2,24 @@
 
 import logging
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 
-from backend.config import settings
+from config import GEMINI_API_KEY, GEMINI_MODEL
 
 logger = logging.getLogger(__name__)
 
 
-def generate_readme(prompt: str) -> str:
+def generate_readme(system_instruction: str, prompt: str) -> str:
     """Send a prompt to the Google Gemini API and return the generated text.
 
-    Initializes the ``google-generativeai`` client with the configured API
-    key and model, then calls ``generate_content`` with conservative
+    Initializes the ``google-genai`` client with the configured API
+    key, then calls ``generate_content`` with conservative
     temperature settings for consistent output.
 
     Args:
-        prompt: The fully assembled prompt string to send to Gemini.
+        system_instruction: Guidelines and behavioral rules for the AI.
+        prompt: The payload to generate the README from.
 
     Returns:
         The raw text response from the Gemini model.
@@ -26,25 +28,23 @@ def generate_readme(prompt: str) -> str:
         ValueError: If the ``GEMINI_API_KEY`` environment variable is not set.
         RuntimeError: If the Gemini API call fails for any reason.
     """
-    api_key = settings.GEMINI_API_KEY
-    if not api_key:
+    if not GEMINI_API_KEY:
         raise ValueError("GEMINI_API_KEY is not set")
 
-    model_name = settings.GEMINI_MODEL
-    logger.info("Calling Gemini API with model: %s", model_name)
+    logger.info("Calling Gemini API with model: %s", GEMINI_MODEL)
 
     try:
-        genai.configure(api_key=api_key)
+        client = genai.Client(api_key=GEMINI_API_KEY)
 
-        model = genai.GenerativeModel(
-            model_name=model_name,
-            generation_config=genai.types.GenerationConfig(
+        response = client.models.generate_content(
+            model=GEMINI_MODEL,
+            contents=prompt,
+            config=types.GenerateContentConfig(
+                system_instruction=system_instruction,
                 temperature=0.3,
-                max_output_tokens=16384,
             ),
         )
 
-        response = model.generate_content(prompt)
         return response.text
 
     except Exception as exc:

@@ -22,7 +22,6 @@ MERMAID DIAGRAM RULES — mandatory, no exceptions:
 7. Keep labels short: 1 to 4 words maximum.
 8. Use plain [] rectangles for ALL nodes. Never use [(, ([, ((, or >[ shapes.
 9. Do NOT use subgraphs.
-10. Do NOT put any text or characters after the closing triple backtick.
 
 CORRECT example — follow this format exactly:
 ```mermaid
@@ -41,7 +40,7 @@ def build_prompt(
     stack: Dict[str, List[str]],
     files: List[Dict[str, str]],
     project_name: str,
-) -> str:
+) -> tuple[str, str]:
     """Build the full Gemini prompt from the analyzed project context.
 
     Combines the directory tree, detected tech stack, and key file contents
@@ -56,7 +55,7 @@ def build_prompt(
         project_name: The name of the project.
 
     Returns:
-        The assembled prompt string ready to send to Gemini.
+        A tuple of (system_instruction, user_prompt) to send to Gemini.
     """
     logger.info("Building prompt for project: %s", project_name)
 
@@ -75,18 +74,18 @@ def build_prompt(
         )
     files_section = "\n\n".join(file_sections) if file_sections else "No key files analyzed."
 
-    prompt = (
+    system_instruction = (
         "You are a senior technical writer. Analyze the following project "
         "information and generate a complete, professional README.md file "
         "in GitHub-Flavored Markdown.\n\n"
-        f"## Project Name\n{project_name}\n\n"
-        f"## Directory Structure\n```\n{tree}\n```\n\n"
-        f"## Detected Technology Stack\n{stack_section}\n\n"
-        f"## Key File Contents\n{files_section}\n\n"
-        "---\n\n"
+        "## CRITICAL RULES\n"
+        "- Output ONLY the raw Markdown content.\n"
+        "- Do NOT wrap the entire output in code fences.\n"
+        "- Do NOT add any preamble, explanation, or commentary.\n"
+        "- The output must be a valid, complete README.md file ready to save to disk.\n\n"
         "## Instructions\n\n"
         "Generate a complete README.md with the following sections IN THIS EXACT ORDER:\n\n"
-        f"1. **# {project_name}** — H1 title\n"
+        f"1. **# Project Name** — H1 title\n"
         "2. **Badges** — shields.io badges for the primary language and MIT license\n"
         "3. **## Overview** — What the project does, in 2-4 sentences\n"
         "4. **## Features** — Bulleted list of key capabilities\n"
@@ -98,12 +97,14 @@ def build_prompt(
         "10. **## Architecture** — Include a Mermaid diagram (see rules below)\n"
         "11. **## Contributing** — Brief contribution guidelines\n"
         "12. **## License** — MIT license statement\n\n"
-        "## CRITICAL RULES\n"
-        "- Output ONLY the raw Markdown content.\n"
-        "- Do NOT wrap the entire output in code fences.\n"
-        "- Do NOT add any preamble, explanation, or commentary.\n"
-        "- The output must be a valid, complete README.md file ready to save to disk.\n\n"
         + MERMAID_INSTRUCTION
     )
 
-    return prompt
+    prompt = (
+        f"## Project Name\n{project_name}\n\n"
+        f"## Directory Structure\n```\n{tree}\n```\n\n"
+        f"## Detected Technology Stack\n{stack_section}\n\n"
+        f"## Key File Contents\n{files_section}\n"
+    )
+
+    return system_instruction, prompt
