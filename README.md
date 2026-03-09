@@ -113,7 +113,7 @@ To get started with fast-readme-ai, follow these steps:
 
 1.  **Clone the repository**:
     ```bash
-    git clone https://github.com/your-username/fast-readme-ai.git
+    git clone https://github.com/hakaninki/fast-readme-ai.git
     cd fast-readme-ai
     ```
 2.  **Install dependencies**:
@@ -209,3 +209,4 @@ Please ensure your code adheres to the project's coding standards and includes a
 ## License
 
 This project is licensed under the MIT License - see the `LICENSE` file for details.
+
